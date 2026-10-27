@@ -1,0 +1,5 @@
+organization = "REPLACE_WITH_HCP_TERRAFORM_ORGANIZATION"
+
+workspaces {
+  name = "gcp-petstore-origin"
+}

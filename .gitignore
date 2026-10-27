@@ -1,0 +1,29 @@
+# Terraform working directories and local state
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+
+# Local Terraform and backend inputs may contain credentials or private config
+*.tfvars
+*.tfvars.json
+*.tfbackend
+backend.hcl
+.env
+.env.*
+!.env.example
+
+# Demo JWT signing key and Python environments
+demo/petstore-api-shield/jwt-private.pem
+.venv/
+__pycache__/
+
+# Local cf CLI cache
+.cloudflare/
+
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/

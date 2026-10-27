@@ -1,0 +1,67 @@
+#cloud-config
+# Container-Optimized OS re-applies this on every boot.
+
+write_files:
+  - path: /etc/cloudflared/fetch-token.sh
+    permissions: "0700"
+    owner: root
+    content: |
+      #!/bin/bash
+      set -euo pipefail
+      umask 077
+      md="http://metadata.google.internal/computeMetadata/v1"
+      access_token=$(curl -sf -H "Metadata-Flavor: Google" "$md/instance/service-accounts/default/token" \
+        | sed -E 's/.*"access_token":"([^"]+)".*/\1/')
+      curl -sf -H "Authorization: Bearer $access_token" \
+        "https://secretmanager.googleapis.com/v1/${tunnel_token_version}:access" \
+        | sed -nE 's/.*"data": *"([^"]+)".*/\1/p' | base64 -d > /etc/cloudflared/token
+      # The cloudflared image runs as the distroless nonroot user.
+      chown 65532:65532 /etc/cloudflared/token
+      chmod 0400 /etc/cloudflared/token
+
+  - path: /etc/systemd/system/petstore.service
+    permissions: "0644"
+    owner: root
+    content: |
+      [Unit]
+      Description=Swagger Petstore v3 API
+      Wants=network-online.target
+      After=network-online.target docker.service
+      Requires=docker.service
+
+      [Service]
+      ExecStartPre=-/usr/bin/docker network create petstore
+      ExecStartPre=-/usr/bin/docker rm -f petstore
+      ExecStart=/usr/bin/docker run --rm --name petstore --network petstore --log-driver=gcplogs ${petstore_image}
+      ExecStop=/usr/bin/docker stop petstore
+      Restart=always
+      RestartSec=5
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/systemd/system/cloudflared.service
+    permissions: "0644"
+    owner: root
+    content: |
+      [Unit]
+      Description=Cloudflare Tunnel to the Petstore container
+      Wants=network-online.target
+      After=network-online.target docker.service petstore.service
+      Requires=docker.service
+
+      [Service]
+      ExecStartPre=/bin/bash /etc/cloudflared/fetch-token.sh
+      ExecStartPre=-/usr/bin/docker network create petstore
+      ExecStartPre=-/usr/bin/docker rm -f cloudflared
+      ExecStart=/usr/bin/docker run --rm --name cloudflared --network petstore --log-driver=gcplogs -v /etc/cloudflared/token:/etc/cloudflared/token:ro ${cloudflared_image} tunnel --no-autoupdate run --token-file /etc/cloudflared/token
+      ExecStop=/usr/bin/docker stop cloudflared
+      Restart=always
+      RestartSec=10
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl start petstore.service cloudflared.service

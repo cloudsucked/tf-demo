@@ -1,0 +1,25 @@
+# Copy to terraform.tfvars (gitignored) and fill in.
+cloudflare_api_token = "<cloudflare-api-token>"
+cloudflare_zone_id   = "<32-hex-zone-id>"
+hcp_organization     = "<hcp-terraform-organization>"
+petstore_hostname    = "petstore.example.com" # same value as in the account stack
+
+# Output of: demo/petstore-api-shield/.venv/bin/python demo/petstore-api-shield/traffic.py keygen
+petstore_jwt_public_key = {
+  kid = "petstore-demo-es256-1"
+  x   = "<base64url-x>"
+  y   = "<base64url-y>"
+}
+
+# Zone entrypoint rulesets that already exist are imported instead of created.
+# See GETTING_STARTED.md for how to list them. Their existing rules are replaced.
+# existing_entrypoint_ruleset_ids = {
+#   http_request_firewall_custom  = "<ruleset-id>"
+#   http_ratelimit                = "<ruleset-id>"
+#   http_request_firewall_managed = "<ruleset-id>"
+# }
+
+# Optional overrides (defaults shown)
+# account_workspace           = "orangecloud"
+# petstore_mitigation_action  = "block" # or "log"
+# petstore_fallthrough_action = "log"   # or "block"
