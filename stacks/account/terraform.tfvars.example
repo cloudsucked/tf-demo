@@ -2,3 +2,9 @@
 cloudflare_api_token  = "<cloudflare-api-token>"
 cloudflare_account_id = "<32-hex-account-id>"
 petstore_hostname     = "petstore.example.com" # must be in your zone; same value in the zone stack
+
+# Optional: Cloudflare Network Firewall (requires Magic Transit or Magic WAN).
+# Set the ID if a magic_transit root ruleset already exists so it is imported.
+# Its rules are replaced by the rules in network_firewall.tf.
+# network_firewall_enabled             = true
+# existing_network_firewall_ruleset_id = "<ruleset-id>"

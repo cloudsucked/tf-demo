@@ -48,6 +48,7 @@ Create a custom API token (**My Profile > API Tokens > Create Token**) with:
 | Zone | DNS: Edit |
 | Zone | Zone WAF: Edit |
 | Zone | API Gateway: Edit |
+| Account | Magic Firewall: Edit (only with `network_firewall_enabled = true`) |
 
 Limit it to your account and zone. Do not type the token directly on the command
 line or in `export TOKEN=...` commands, because it ends up in your shell

@@ -5,6 +5,12 @@ Terraform root for account-scoped Cloudflare resources, set by
 Shield demo. Its outputs (tunnel ID and token) are read through remote state by
 `stacks/gcp/petstore-origin/` and the zone stack.
 
+Optionally (`network_firewall_enabled = true`) it also manages the Cloudflare
+Network Firewall (formerly Magic Firewall) policies in the account's
+`magic_transit` root ruleset (`network_firewall.tf`). This requires Magic
+Transit or Magic WAN. Set `existing_network_firewall_ruleset_id` to import a
+root ruleset that was created in the dashboard.
+
 Copy `backend.hcl.example` to `backend.hcl` and `terraform.tfvars.example` to
 `terraform.tfvars` (both gitignored), then run
 `terraform init -backend-config=backend.hcl`. Keep zone-scoped resources in
