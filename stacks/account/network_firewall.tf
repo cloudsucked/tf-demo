@@ -18,8 +18,6 @@ resource "cloudflare_ruleset" "network_firewall" {
 
   rules = [
     {
-      # ref kept from the dashboard-created rule so the import does not replace it.
-      ref         = "9822570498bb4130ac131a63a44fcf9f"
       description = "Testing MFW"
       action      = "block"
       expression  = "(ip.dst eq 1.2.3.4 and ip.proto in {\"igmp\"} and ip.ttl gt 128)"
