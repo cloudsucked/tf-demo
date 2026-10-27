@@ -105,6 +105,7 @@ resource "cloudflare_ruleset" "custom_firewall" {
       ref         = "petstore_jwt_required"
       description = "Petstore: require a valid JWT on saved operations"
       action      = var.petstore_mitigation_action
+      enabled     = false
       expression = join(" and ", [
         "http.host eq \"${var.petstore_hostname}\"",
         "not cf.api_gateway.fallthrough_detected",
